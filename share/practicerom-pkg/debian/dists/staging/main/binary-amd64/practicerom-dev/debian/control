@@ -1,0 +1,15 @@
+Source: practicerom-dev
+Maintainer: glank <glankk@github.com>
+Section: devel
+Priority: optional
+Build-Depends: debhelper
+Standards-Version: 4.5.0.2
+Homepage: https://practicerom.com
+
+Package: practicerom-dev
+Architecture: amd64
+Section: devel
+Priority: optional
+Depends: n64-ultra, gzinject, wii-toolchain, ${misc:Depends}
+Description: Essential packages for practice rom development
+Homepage: https://practicerom.com

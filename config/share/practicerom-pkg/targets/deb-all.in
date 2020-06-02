@@ -1,0 +1,16 @@
+(
+	set -e
+
+	prefix="@prefix@"
+	exec_prefix="@exec_prefix@"
+	bindir="@bindir@"
+	datarootdir="@datarootdir@"
+	datadir="@datadir@"
+	sysconfdir="@sysconfdir@"
+
+	. "${sysconfdir}/practicerom-pkg/practicerom-pkg.conf"
+
+	for t in `find -L "${target_root}" -type f -name 'deb-*' -not -name 'deb-all'`; do
+		. "${t}"
+	done
+)

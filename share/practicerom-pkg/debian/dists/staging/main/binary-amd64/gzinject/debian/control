@@ -1,0 +1,15 @@
+Source: gzinject
+Maintainer: glank <glankk@github.com>
+Section: devel
+Priority: optional
+Build-Depends: debhelper
+Standards-Version: 4.5.0.2
+Homepage: https://github.com/krimtonz/gzinject
+
+Package: gzinject
+Architecture: amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: CLI Wii WAD editing utility
+Homepage: https://github.com/krimtonz/gzinject

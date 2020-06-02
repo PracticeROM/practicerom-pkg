@@ -1,0 +1,26 @@
+#!/usr/bin/make -f
+
+export DEB_CFLAGS_MAINT_STRIP         = -Werror=format-security
+export DEB_CXXFLAGS_MAINT_STRIP       = -Werror=format-security
+
+%:
+	dh $@
+
+override_dh_auto_build:
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	--with-configure-gcc='--disable-libcc1 --includedir='\''$$$${prefix}/include/powerpc-eabi'\'' --datadir='\''$$$${datarootdir}/powerpc-eabi'\'
+
+override_dh_auto_install:
+	$(MAKE) DESTDIR=$$(pwd)/debian/wii-toolchain gcc
+	cd gcc && ./contrib/download_prerequisites
+	$(MAKE) DESTDIR=$$(pwd)/debian/wii-toolchain install-newlib
+	cp -a debian/wii-toolchain/usr/powerpc-eabi/include gcc/build/gcc
+	$(MAKE) DESTDIR=$$(pwd)/debian/wii-toolchain install-toolchain
+
+override_dh_strip:
+	dh_strip \
+	--exclude=usr/lib/gcc/powerpc-eabi/ \
+	--exclude=usr/powerpc-eabi/lib/ \
+	--no-automatic-dbgsym

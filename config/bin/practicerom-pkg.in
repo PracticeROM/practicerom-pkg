@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+datarootdir="@datarootdir@"
+datadir="@datadir@"
+sysconfdir="@sysconfdir@"
+
+. "${sysconfdir}/practicerom-pkg/practicerom-pkg.conf"
+
+if [ $# -eq 0 ]; then
+	echo "usage:" >&2
+	echo "	${0} [--target] <target-name>" >&2
+	echo "	${0} --init [...]" >&2
+	echo "	${0} --deb [...]" >&2
+	exit 1
+elif [ x"${1}" = x"--init" ]; then
+	shift
+	exec practicerom-pkg-init "$@"
+elif [ x"${1}" = x"--deb" ]; then
+	shift
+	exec practicerom-pkg-deb "$@"
+else
+	if [ x"${1}" = x"--target" ]; then
+		shift
+	fi
+	exec practicerom-pkg-target "$@"
+fi

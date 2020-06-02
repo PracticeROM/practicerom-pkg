@@ -1,0 +1,98 @@
+#!/bin/bash
+
+set -e
+
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+datarootdir="@datarootdir@"
+datadir="@datadir@"
+sysconfdir="@sysconfdir@"
+
+. "${sysconfdir}/practicerom-pkg/practicerom-pkg.conf"
+
+dist_root="${archive_root}/dists/${dist}"
+pkg_root="${dist_root}/${comp}/${type}"
+dist_data_dir="${datadir}/practicerom-pkg/debian/dists/${dist}"
+
+pkg_name=""
+git_url=""
+git_branch="master"
+
+while [ $# -ne 0 ]; do
+	case "${1}" in
+	-p|--pkg-name)
+		pkg_name="${2}"
+		if [ -z "${pkg_name}" ]; then
+			echo "${0}: option ${1} requires parameter" >&2
+			exit 1
+		fi
+		shift
+		;;
+	--git-url)
+		git_url="${2}"
+		if [ -z "${git_url}" ]; then
+			echo "${0}: option ${1} requires parameter" >&2
+			exit 1
+		fi
+		shift
+		;;
+	--git-branch)
+		git_branch="${2}"
+		if [ -z "${git_branch}" ]; then
+			echo "${0}: option ${1} requires parameter" >&2
+			exit 1
+		fi
+		shift
+		;;
+	*)
+		echo "${0}: unrecognized option: ‘${1}’" >&2
+		exit 1
+		;;
+	esac
+	shift
+done
+
+if [ -z "${pkg_name}" ]; then echo "${0}: no package specified (-p|--pkg-name)" >&2; exit 1; fi
+if [ -n "${git_url}" ] && [ -z "${git_branch}" ]; then echo "${0}: no git branch specified (--git-branch)" >&2; exit 1; fi
+
+pkg_dir="${pkg_root}/${pkg_name}"
+pkg_data_dir="${dist_data_dir}/${comp}/${type}/${pkg_name}"
+
+(
+	flock 200
+
+	build_dir="`mktemp -d`"
+	trap 'rm -rf "${build_dir}"' EXIT INT QUIT TERM
+	src_dir="${build_dir}/src"
+	mkdir -p "${src_dir}"
+	if [ -n "${git_url}" ]; then
+		git clone -b "${git_branch}" "${git_url}" "${src_dir}"
+	fi
+
+	mkdir -p "${pkg_dir}"
+	cp -a "${pkg_data_dir}/"* "${src_dir}"
+	cp "${pkg_dir}/changelog" "${src_dir}/debian/changelog" || true
+	if [ -n "${git_url}" ]; then
+		(cd "${src_dir}" && gbp dch --ignore-branch -a -S)
+	fi
+	(cd "${src_dir}" && debuild -us -uc)
+	find "${build_dir}" -maxdepth 1 -type f -exec cp '{}' "${pkg_dir}" ';'
+	cp "${src_dir}/debian/changelog" "${pkg_dir}"
+
+	(
+		flock 201
+
+		(cd "${archive_root}" && dpkg-scanpackages -m "dists/${dist}/${comp}/${type}" >"${pkg_root}/Packages")
+	) 201>"/var/lock/practicerom-pkg-deb-Packages.lock"
+
+	(
+		flock 202
+
+		rm -f "${dist_root}/Release"
+		rm -f "${dist_root}/InRelease"
+		cat "${dist_data_dir}/Release.header" >"${dist_root}/Release"
+		apt-ftparchive release "${dist_root}" >>"${dist_root}/Release"
+		gpg --homedir "${gpg_homedir}" --default-key "${gpg_default_key}" --output "${dist_root}/InRelease" --digest-algo SHA512 --clearsign "${dist_root}/Release"
+	) 202>"/var/lock/practicerom-pkg-deb-Release.lock"
+) 200>"/var/lock/practicerom-pkg-deb-${pkg_name}.lock"

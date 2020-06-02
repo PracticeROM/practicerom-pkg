@@ -1,0 +1,50 @@
+srcdir=@srcdir@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+sysconfdir=@sysconfdir@
+MKDIR_P=@MKDIR_P@
+INSTALL=@INSTALL@
+CONFIG_BIN_FILES=@CONFIG_BIN_FILES@
+CONFIG_DATA_FILES=@CONFIG_DATA_FILES@
+CONFIG_SYSCONF_FILES=@CONFIG_SYSCONF_FILES@
+
+.PHONY: all install uninstall clean distclean
+
+all:
+
+install:
+	$(MKDIR_P) "$(DESTDIR)$(bindir)"
+	for f in $(CONFIG_BIN_FILES); do \
+		d="$(DESTDIR)$(bindir)/`dirname "$${f#config/bin/}"`"; \
+		$(MKDIR_P) "$${d}"; \
+		$(INSTALL) -m 0755 "$${f}" "$${d}"; \
+	done
+	$(MKDIR_P) "$(DESTDIR)$(datadir)"
+	cp -R "$(srcdir)/share"/* "$(DESTDIR)$(datadir)"
+	for f in $(CONFIG_DATA_FILES); do \
+		d="$(DESTDIR)$(datadir)/`dirname "$${f#config/share/}"`"; \
+		$(MKDIR_P) "$${d}"; \
+		$(INSTALL) -m 0644 "$${f}" "$${d}"; \
+	done
+	$(MKDIR_P) "$(DESTDIR)$(sysconfdir)"
+	cp -R "$(srcdir)/etc"/* "$(DESTDIR)$(sysconfdir)"
+	for f in $(CONFIG_SYSCONF_FILES); do \
+		d="$(DESTDIR)$(sysconfdir)/`dirname "$${f#config/etc/}"`"; \
+		$(MKDIR_P) "$${d}"; \
+		$(INSTALL) -m 0644 "$${f}" "$${d}"; \
+	done
+
+uninstall:
+	for f in $(CONFIG_BIN_FILES); do \
+		rm -f "$(DESTDIR)$(bindir)/$${f#config/bin/}"; \
+	done
+	rm -rf "$(DESTDIR)$(datadir)/practicerom-pkg"
+	rm -rf "$(DESTDIR)$(sysconfdir)/practicerom-pkg"
+
+clean:
+
+distclean:
+	rm -f config.log config.status Makefile $(CONFIG_BIN_FILES) $(CONFIG_DATA_FILES) $(CONFIG_SYSCONF_FILES)

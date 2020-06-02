@@ -1,0 +1,15 @@
+Source: n64-ultra
+Maintainer: glank <glankk@github.com>
+Section: devel
+Priority: optional
+Build-Depends: debhelper, curl, texinfo, liblua5.3-dev, libjansson-dev, libusb-1.0-0-dev
+Standards-Version: 4.5.0.2
+Homepage: https://github.com/glankk/n64
+
+Package: n64-ultra
+Architecture: amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: glank's programs, headers, libs, and toolchain for the N64 and Wii VC
+Homepage: https://github.com/glankk/n64

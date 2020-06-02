@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+export DEB_CFLAGS_MAINT_STRIP         = -Werror=format-security
+export DEB_CXXFLAGS_MAINT_STRIP       = -Werror=format-security
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	--with-configure-gcc='--disable-libcc1 --includedir='\''$$$${prefix}/include/mips64-ultra-elf'\'' --datadir='\''$$$${datarootdir}/mips64-ultra-elf'\' \
+	--with-configure-gdb='--includedir='\''$$$${prefix}/include/mips64-ultra-elf'\'' --datadir='\''$$$${datarootdir}/mips64-ultra-elf'\'
+
+override_dh_auto_install:
+	$(MAKE) DESTDIR=$$(pwd)/debian/n64-ultra install
+	mv $$(pwd)/debian/n64-ultra/usr/bin/gs $$(pwd)/debian/n64-ultra/usr/bin/n64-gs
+	$(MAKE) DESTDIR=$$(pwd)/debian/n64-ultra install-newlib
+	cp -a debian/n64-ultra/usr/mips64-ultra-elf/include build-gcc/gcc
+	$(MAKE) DESTDIR=$$(pwd)/debian/n64-ultra install-toolchain
+	$(MAKE) DESTDIR=$$(pwd)/debian/n64-ultra install-sys
+	$(MAKE) DESTDIR=$$(pwd)/debian/n64-ultra install-compat-exec
+	rm -rf $$(pwd)/debian/n64-ultra/usr/share/info
+	rm -rf $$(pwd)/debian/n64-ultra/usr/share/man/man7
+
+override_dh_strip:
+	dh_strip \
+	--exclude=usr/lib/gcc/mips64-ultra-elf/ \
+	--exclude=usr/mips64-ultra-elf/lib/ \
+	--exclude=usr/mips64-ultra-elf/n64-sysroot/ \
+	--no-automatic-dbgsym

@@ -1,0 +1,3 @@
+(
+	practicerom-pkg-deb --pkg-name 'wii-toolchain' --git-url 'https://github.com/krimtonz/wii-toolchain'
+)

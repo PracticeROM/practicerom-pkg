@@ -1,0 +1,15 @@
+Source: wii-toolchain
+Maintainer: glank <glankk@github.com>
+Section: devel
+Priority: optional
+Build-Depends: debhelper, curl, texinfo
+Standards-Version: 4.5.0.2
+Homepage: https://github.com/krimtonz/wii-toolchain
+
+Package: wii-toolchain
+Architecture: amd64
+Section: devel
+Priority: optional
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Toolchain for the Wii
+Homepage: https://github.com/krimtonz/wii-toolchain
