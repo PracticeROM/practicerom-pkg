@@ -1,1 +1,1 @@
-deb https://practicerom.com/public/packages/debian ./staging main
+deb http://practicerom.com/public/packages/debian staging main
