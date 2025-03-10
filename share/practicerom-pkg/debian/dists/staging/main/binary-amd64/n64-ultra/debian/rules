@@ -8,7 +8,7 @@ export DEB_CXXFLAGS_MAINT_STRIP       = -Werror=format-security
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-	--with-configure-toolchain=' --disable-libcc1 --includedir='\''$$$${prefix}/include/mips64-ultra-elf'\'' --datadir='\''$$$${datarootdir}/mips64-ultra-elf'\'
+	--with-configure-toolchain='--disable-libcc1 --includedir='\''$$$${prefix}/include/mips64-ultra-elf'\'' --datadir='\''$$$${datarootdir}/mips64-ultra-elf'\'
 
 override_dh_auto_build:
 	$(MAKE) all
