@@ -1,5 +1,5 @@
 Source: n64-ultra
-Maintainer: glank <glankk@github.com>
+Maintainer: glank <glank@practicerom.com>
 Section: devel
 Priority: optional
 Build-Depends: debhelper, curl, texinfo, liblua5.3-dev, libjansson-dev, libusb-1.0-0-dev

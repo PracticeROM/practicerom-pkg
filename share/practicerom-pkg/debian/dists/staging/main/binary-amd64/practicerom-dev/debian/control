@@ -1,5 +1,5 @@
 Source: practicerom-dev
-Maintainer: glank <glankk@github.com>
+Maintainer: glank <glank@practicerom.com>
 Section: devel
 Priority: optional
 Build-Depends: debhelper
