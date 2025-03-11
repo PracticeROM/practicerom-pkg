@@ -18,4 +18,6 @@ fi
 
 rm -rf "${archive_root}"
 mkdir -p "${archive_root}"
+mkdir -p "${lock_dir}"
+chmod 2775 "${lock_dir}"
 gpg --homedir "${gpg_homedir}" --default-key "${gpg_default_key}" --output "${archive_root}/pgp.pub" --armor --export

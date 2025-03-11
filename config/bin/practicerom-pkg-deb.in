@@ -84,7 +84,7 @@ pkg_data_dir="${dist_data_dir}/${comp}/${type}/${pkg_name}"
 		flock 201
 
 		(cd "${archive_root}" && dpkg-scanpackages -m "dists/${dist}/${comp}/${type}" >"${pkg_root}/Packages")
-	) 201>"/var/lock/practicerom-pkg-deb-Packages.lock"
+	) 201>"${lock_dir}/deb-Packages.lock"
 
 	(
 		flock 202
@@ -94,5 +94,5 @@ pkg_data_dir="${dist_data_dir}/${comp}/${type}/${pkg_name}"
 		cat "${dist_data_dir}/Release.header" >"${dist_root}/Release"
 		apt-ftparchive release "${dist_root}" >>"${dist_root}/Release"
 		gpg --homedir "${gpg_homedir}" --default-key "${gpg_default_key}" --output "${dist_root}/InRelease" --digest-algo SHA512 --clearsign "${dist_root}/Release"
-	) 202>"/var/lock/practicerom-pkg-deb-Release.lock"
-) 200>"/var/lock/practicerom-pkg-deb-${pkg_name}.lock"
+	) 202>"${lock_dir}/deb-Release.lock"
+) 200>"${lock_dir}/deb-Package-${pkg_name}.lock"
